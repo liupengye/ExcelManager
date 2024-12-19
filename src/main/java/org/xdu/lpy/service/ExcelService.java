@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.xdu.lpy.exception.BusinessException;
 import org.xdu.lpy.mapper.ExcelMetaMapper;
 import org.xdu.lpy.model.ExcelMeta;
 
@@ -32,6 +33,20 @@ public class ExcelService {
         EasyExcel.read(file.getInputStream(), new AnalysisEventListener<Map<Integer, String>>() {
             @Override
             public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
+                // 检查表头是否重复
+                Set<String> uniqueHeaders = new HashSet<>();
+                List<String> duplicateHeaders = new ArrayList<>();
+                
+                headMap.values().forEach(header -> {
+                    if (!uniqueHeaders.add(header)) {
+                        duplicateHeaders.add(header);
+                    }
+                });
+                
+                if (!duplicateHeaders.isEmpty()) {
+                    throw new BusinessException("Excel表头存在重复: " + String.join(", ", duplicateHeaders));
+                }
+                
                 headers.addAll(headMap.values());
             }
             
