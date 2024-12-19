@@ -1,10 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getTableData, updateCell } from '../api/excel'
 
 const route = useRoute()
+const router = useRouter()
 const tableId = route.params.id
 const tableData = ref([])
 const headers = ref([])
@@ -71,6 +72,11 @@ const handleSave = async () => {
   }
 }
 
+// 返回主页
+const goBack = () => {
+  router.push('/')
+}
+
 onMounted(() => {
   loadTableData()
 })
@@ -81,7 +87,17 @@ onMounted(() => {
     <el-card>
       <template #header>
         <div class="card-header">
-          <span>表格数据</span>
+          <div class="header-left">
+            <el-button 
+              type="primary" 
+              plain 
+              size="small"
+              @click="goBack"
+            >
+              返回主页
+            </el-button>
+            <span class="title">表格数据</span>
+          </div>
         </div>
       </template>
       
@@ -166,5 +182,19 @@ onMounted(() => {
 }
 :deep(.el-table__cell) {
   padding: 0 !important;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.title {
+  font-size: 16px;
+  font-weight: 500;
 }
 </style> 

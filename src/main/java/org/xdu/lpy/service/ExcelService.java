@@ -67,4 +67,17 @@ public class ExcelService {
         excelMeta.setUpdateTime(LocalDateTime.now());
         excelMetaMapper.insert(excelMeta);
     }
+    
+    /**
+     * 删除Excel文件及其数据
+     */
+    public void deleteExcel(Long id) {
+        ExcelMeta meta = excelMetaMapper.selectById(id);
+        if (meta != null) {
+            // 删除数据表
+            dynamicTableService.dropTable(meta.getTableName());
+            // 删除元数据
+            excelMetaMapper.deleteById(id);
+        }
+    }
 } 

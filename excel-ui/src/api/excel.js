@@ -38,4 +38,8 @@ export const getTableData = (tableId, page = 1, size = 10) => {
 
 export const updateCell = (tableId, data) => {
   return api.put(`/excel/data/${tableId}`, data)
+}
+
+export const deleteExcel = (id) => {
+  return api.delete(`/excel/${id}`)
 } 

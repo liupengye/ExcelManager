@@ -84,4 +84,12 @@ public class DynamicTableService {
         String sql = "UPDATE " + tableName + " SET " + column + " = ? WHERE id = ?";
         jdbcTemplate.update(sql, value, id);
     }
+    
+    /**
+     * 删除动态表
+     */
+    public void dropTable(String tableName) {
+        String sql = "DROP TABLE IF EXISTS " + tableName;
+        jdbcTemplate.execute(sql);
+    }
 } 

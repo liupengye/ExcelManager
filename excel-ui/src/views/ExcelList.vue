@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { getExcelList, uploadExcel } from '../api/excel'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { getExcelList, uploadExcel, deleteExcel } from '../api/excel'
 
 const router = useRouter()
 const excelList = ref([])
@@ -34,6 +34,28 @@ const viewTable = (id) => {
   router.push(`/table/${id}`)
 }
 
+const handleDelete = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除文件 "${row.fileName}" 吗？`,
+      '删除确认',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+    )
+    
+    await deleteExcel(row.id)
+    ElMessage.success('删除成功')
+    await loadExcelList()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('删除失败')
+    }
+  }
+}
+
 onMounted(() => {
   loadExcelList()
 })
@@ -61,10 +83,21 @@ onMounted(() => {
       <el-table :data="excelList" style="width: 100%">
         <el-table-column prop="fileName" label="文件名" />
         <el-table-column prop="createTime" label="上传时间" />
-        <el-table-column fixed="right" label="操作" width="120">
+        <el-table-column fixed="right" label="操作" width="200">
           <template #default="{ row }">
-            <el-button link type="primary" @click="viewTable(row.id)">
+            <el-button 
+              link 
+              type="primary" 
+              @click="viewTable(row.id)"
+            >
               查看数据
+            </el-button>
+            <el-button 
+              link 
+              type="danger" 
+              @click="handleDelete(row)"
+            >
+              删除
             </el-button>
           </template>
         </el-table-column>

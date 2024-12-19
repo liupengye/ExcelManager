@@ -67,4 +67,10 @@ public class ExcelController {
         );
         return ResponseEntity.ok().build();
     }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteExcel(@PathVariable Long id) {
+        excelService.deleteExcel(id);
+        return ResponseEntity.ok().build();
+    }
 } 
