@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getTableData, updateCell } from '../api/excel'
@@ -80,6 +80,19 @@ const goBack = () => {
 onMounted(() => {
   loadTableData()
 })
+
+// 计算弹窗宽度
+const dialogWidth = computed(() => {
+  if (!editingValue.value) return '30%'
+  return editingValue.value.length > 100 ? '50%' : '30%'
+})
+
+// 计算文本域行数
+const textareaRows = computed(() => {
+  if (!editingValue.value) return 4
+  const lineCount = editingValue.value.split('\n').length
+  return Math.min(Math.max(lineCount, 4), 15)
+})
 </script>
 
 <template>
@@ -143,14 +156,17 @@ onMounted(() => {
     <el-dialog
       v-model="dialogVisible"
       title="编辑内容"
-      width="30%"
+      :width="dialogWidth"
       :close-on-click-modal="false"
     >
       <el-input
         v-model="editingValue"
         type="textarea"
-        :rows="4"
-        placeholder="请输入内容"
+        :rows="textareaRows"
+        :maxlength="1000"
+        show-word-limit
+        resize="vertical"
+        class="edit-textarea"
       />
       <template #footer>
         <span class="dialog-footer">
@@ -196,5 +212,11 @@ onMounted(() => {
 .title {
   font-size: 16px;
   font-weight: 500;
+}
+.edit-textarea {
+  width: 100%;
+}
+:deep(.el-textarea__inner) {
+  min-height: 100px;
 }
 </style> 
