@@ -33,7 +33,7 @@ export const getExcelList = () => {
 export const getTableData = (tableId, page = 1, size = 10) => {
   return api.get(`/excel/data/${tableId}`, {
     params: { page, size }
-  })
+  }).then(response => response.data)
 }
 
 export const updateCell = (tableId, data) => {

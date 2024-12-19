@@ -11,20 +11,33 @@ const headers = ref([])
 const loading = ref(false)
 const currentPage = ref(1)
 const pageSize = ref(10)
+const total = ref(0)
 
 const loadTableData = async () => {
   try {
     loading.value = true
-    const { data } = await getTableData(tableId, currentPage.value, pageSize.value)
-    tableData.value = data
-    if (data.length > 0) {
-      headers.value = Object.keys(data[0]).filter(key => key !== 'id')
+    const data = await getTableData(tableId, currentPage.value, pageSize.value)
+    tableData.value = data.records
+    total.value = data.total
+    if (data.records.length > 0) {
+      headers.value = Object.keys(data.records[0]).filter(key => key !== 'id')
     }
   } catch (error) {
     ElMessage.error('加载数据失败')
   } finally {
     loading.value = false
   }
+}
+
+const handleSizeChange = (size) => {
+  pageSize.value = size
+  currentPage.value = 1 // 切换每页显示数量时重置为第一页
+  loadTableData()
+}
+
+const handleCurrentChange = (page) => {
+  currentPage.value = page
+  loadTableData()
 }
 
 const handleCellEdit = async (row, column) => {
@@ -78,10 +91,11 @@ onMounted(() => {
         <el-pagination
           v-model:current-page="currentPage"
           v-model:page-size="pageSize"
+          :total="total"
           :page-sizes="[10, 20, 50, 100]"
           layout="total, sizes, prev, pager, next"
-          @size-change="loadTableData"
-          @current-change="loadTableData"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
         />
       </div>
     </el-card>

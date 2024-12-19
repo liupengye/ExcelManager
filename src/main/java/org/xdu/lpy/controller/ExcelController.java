@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.xdu.lpy.dto.PageRequest;
+import org.xdu.lpy.dto.PageResponse;
 import org.xdu.lpy.dto.UpdateCellRequest;
 import org.xdu.lpy.mapper.ExcelMetaMapper;
 import org.xdu.lpy.model.ExcelMeta;
@@ -35,19 +36,19 @@ public class ExcelController {
     }
     
     @GetMapping("/data/{tableId}")
-    public ResponseEntity<List<Map<String, Object>>> getTableData(
+    public ResponseEntity<PageResponse> getTableData(
             @PathVariable Long tableId,
             PageRequest pageRequest) {
         ExcelMeta meta = excelMetaMapper.selectById(tableId);
         if (meta == null) {
             return ResponseEntity.notFound().build();
         }
-        List<Map<String, Object>> data = dynamicTableService.queryByPage(
+        PageResponse response = dynamicTableService.queryByPage(
                 meta.getTableName(),
                 pageRequest.getPage(),
                 pageRequest.getSize()
         );
-        return ResponseEntity.ok(data);
+        return ResponseEntity.ok(response);
     }
     
     @PutMapping("/data/{tableId}")

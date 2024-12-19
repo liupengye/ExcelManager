@@ -3,6 +3,7 @@ package org.xdu.lpy.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.xdu.lpy.dto.PageResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -54,11 +55,26 @@ public class DynamicTableService {
     }
     
     /**
-     * 分页查询数据
+     * 获取表格总记录数
      */
-    public List<Map<String, Object>> queryByPage(String tableName, int page, int size) {
+    public long getTotal(String tableName) {
+        String sql = "SELECT COUNT(*) FROM " + tableName;
+        return jdbcTemplate.queryForObject(sql, Long.class);
+    }
+    
+    /**
+     * 分页查询数据（更新返回类型）
+     */
+    public PageResponse queryByPage(String tableName, int page, int size) {
         String sql = "SELECT * FROM " + tableName + " LIMIT ? OFFSET ?";
-        return jdbcTemplate.queryForList(sql, size, (page - 1) * size);
+        List<Map<String, Object>> records = jdbcTemplate.queryForList(sql, size, (page - 1) * size);
+        
+        PageResponse response = new PageResponse();
+        response.setRecords(records);
+        response.setTotal(getTotal(tableName));
+        response.setPage(page);
+        response.setSize(size);
+        return response;
     }
     
     /**

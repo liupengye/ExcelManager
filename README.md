@@ -12,7 +12,7 @@
 - 通用数据操作
   - 支持对导入数据的增删改查
   - 动态SQL构建,适配不同表结构
-  
+
 ### 前端功能
 - 文件上传
   - 支持Excel文件上传
@@ -32,11 +32,37 @@
 - EasyExcel 3.3.3
 - MySQL
 
-### 前端 
+### 前端
 - Vue 3
 - Element Plus
 - Vite
 
-## 快速开始
 
-1. 启动后端服务 
+## 使用说明
+
+1. 文件上传
+- 支持.xlsx/.xls格式的Excel文件
+- Excel文件第一行必须是表头
+- 数据行从第二行开始
+
+2. 数据管理
+- 可查看所有已导入的Excel文件列表
+- 点击文件名进入数据预览和编辑页面
+- 支持单元格双击编辑
+
+## 数据库设计
+
+1. excel_meta - Excel元数据表
+   sql
+   CREATE TABLE excel_meta (
+   id BIGINT PRIMARY KEY AUTO_INCREMENT,
+   file_name VARCHAR(255),
+   table_name VARCHAR(255),
+   headers TEXT,
+   create_time DATETIME,
+   update_time DATETIME
+   );
+
+2. 动态数据表
+- 系统会根据上传的Excel自动创建对应的数据表
+- 表名格式: excel_data_{timestamp}

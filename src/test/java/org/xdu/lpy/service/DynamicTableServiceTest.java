@@ -3,6 +3,7 @@ package org.xdu.lpy.service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.xdu.lpy.BaseTest;
+import org.xdu.lpy.dto.PageResponse;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -65,11 +66,11 @@ class DynamicTableServiceTest extends BaseTest {
         dynamicTableService.batchInsert(tableName, columns, dataList);
         
         // 测试分页查询
-        List<Map<String, Object>> page1 = dynamicTableService.queryByPage(tableName, 1, 2);
-        assertEquals(2, page1.size());
-        
-        List<Map<String, Object>> page2 = dynamicTableService.queryByPage(tableName, 2, 2);
-        assertEquals(1, page2.size());
+        PageResponse page1 = dynamicTableService.queryByPage(tableName, 1, 2);
+        assertEquals(2, page1.getSize());
+
+        PageResponse page2 = dynamicTableService.queryByPage(tableName, 1, 2);
+        assertEquals(1, page2.getSize());
     }
     
     @Test
