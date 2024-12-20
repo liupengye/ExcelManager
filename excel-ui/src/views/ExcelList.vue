@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getExcelList, uploadExcel, deleteExcel } from '../api/excel'
+import { getExcelList, uploadExcel, deleteExcel, exportExcel } from '../api/excel'
 
 const router = useRouter()
 const excelList = ref([])
@@ -83,7 +83,7 @@ onMounted(() => {
       <el-table :data="excelList" style="width: 100%">
         <el-table-column prop="fileName" label="文件名" />
         <el-table-column prop="createTime" label="上传时间" />
-        <el-table-column fixed="right" label="操作" width="200">
+        <el-table-column fixed="right" label="操作" width="280">
           <template #default="{ row }">
             <el-button 
               link 
@@ -91,6 +91,13 @@ onMounted(() => {
               @click="viewTable(row.id)"
             >
               查看数据
+            </el-button>
+            <el-button 
+              link 
+              type="success" 
+              @click="exportExcel(row.id)"
+            >
+              导出
             </el-button>
             <el-button 
               link 

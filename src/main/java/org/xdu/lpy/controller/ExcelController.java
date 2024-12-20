@@ -1,5 +1,6 @@
 package org.xdu.lpy.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +12,13 @@ import org.xdu.lpy.mapper.ExcelMetaMapper;
 import org.xdu.lpy.model.ExcelMeta;
 import org.xdu.lpy.service.DynamicTableService;
 import org.xdu.lpy.service.ExcelService;
+import org.xdu.lpy.service.ExportService;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/excel")
@@ -23,6 +28,7 @@ public class ExcelController {
     private final ExcelService excelService;
     private final ExcelMetaMapper excelMetaMapper;
     private final DynamicTableService dynamicTableService;
+    private final ExportService exportService;
     
     @PostMapping("/upload")
     public ResponseEntity<Void> uploadExcel(@RequestParam("file") MultipartFile file) throws Exception {
@@ -72,5 +78,23 @@ public class ExcelController {
     public ResponseEntity<Void> deleteExcel(@PathVariable Long id) {
         excelService.deleteExcel(id);
         return ResponseEntity.ok().build();
+    }
+    
+    @GetMapping("/{id}/export")
+    public void exportExcel(
+            @PathVariable Long id,
+            HttpServletResponse response) throws IOException {
+        ExcelMeta meta = excelMetaMapper.selectById(id);
+        if (meta == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        String fileName = URLEncoder.encode(meta.getFileName(), "UTF-8");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+        
+        exportService.exportExcel(id, response.getOutputStream());
     }
 } 

@@ -92,4 +92,12 @@ public class DynamicTableService {
         String sql = "DROP TABLE IF EXISTS " + tableName;
         jdbcTemplate.execute(sql);
     }
+    
+    /**
+     * 获取表格所有数据
+     */
+    public List<Map<String, Object>> getAllData(String tableName) {
+        String sql = "SELECT * FROM " + tableName;
+        return jdbcTemplate.queryForList(sql);
+    }
 } 

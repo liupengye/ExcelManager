@@ -42,4 +42,8 @@ export const updateCell = (tableId, data) => {
 
 export const deleteExcel = (id) => {
   return api.delete(`/excel/${id}`)
+}
+
+export const exportExcel = (id) => {
+  window.location.href = `/api/excel/${id}/export`
 } 
