@@ -47,7 +47,7 @@ public class ExportService {
         // 写入Excel
         EasyExcel.write(outputStream)
                 .head(headers.stream()
-                        .map(header -> List.of(header))
+                        .map(List::of)
                         .toList())
                 .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()) // 自动列宽
                 .sheet("Sheet1")
